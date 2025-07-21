@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 import argparse
-from tqdm import tqdm  # Importer tqdm pour la barre de progression
+from tqdm import tqdm
 
 def sigmoid(z):
     """La fonction sigmoïde pour la classification binaire."""
@@ -143,7 +143,7 @@ def train(X, y, classes, learning_rate=0.0001, epochs=500, lambda_reg=0.001, met
     else:
         raise ValueError("Méthode non reconnue. Choisir 'batch', 'sgd', ou 'mini_batch'.")
 
-    # Créer la barre de progression (avec couleurs et emoji)
+    # Créer la barre de progression
     progress_bar = tqdm(total=total_iterations, desc="Entraînement 🚀 ", ncols=100, unit="itération", leave=True, bar_format="{l_bar}{bar}", colour="green")
 
     for cls in classes:
