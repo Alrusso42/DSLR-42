@@ -1,9 +1,12 @@
 import pandas as pd
 import matplotlib.pyplot as plt
+from utils import clean_csv
 
 def find_most_similar_features(data):
-    numeric_data = data.select_dtypes(include='number')
-    correlation_matrix = numeric_data.corr()
+    """
+    Trouve les deux colonnes numériques les plus corrélées dans un DataFrame.
+    """
+    correlation_matrix = data.drop(columns='Hogwarts House').corr()
 
     max_corr = 0
     feature1 = None
@@ -11,17 +14,17 @@ def find_most_similar_features(data):
 
     for i in range(len(correlation_matrix.columns)):
         for j in range(i):
-            if abs(correlation_matrix.iloc[i, j]) > max_corr:
-                max_corr = abs(correlation_matrix.iloc[i, j])
+            corr_value = abs(correlation_matrix.iloc[i, j])
+            if corr_value > max_corr:
+                max_corr = corr_value
                 feature1, feature2 = correlation_matrix.columns[i], correlation_matrix.columns[j]
 
     return feature1, feature2
 
-def main(filename):
-    data = pd.read_csv(filename)
-    
-    feature1, feature2 = find_most_similar_features(data)
-
+def plot_features(data, feature1, feature2):
+    """
+    Affiche un scatter plot des deux features données, coloré par maison.
+    """
     colors = {'Gryffindor': 'red', 'Hufflepuff': 'yellow', 'Ravenclaw': 'blue', 'Slytherin': 'green'}
 
     plt.figure(figsize=(10, 6))
@@ -36,6 +39,11 @@ def main(filename):
     plt.legend(title='Hogwarts House')
     plt.grid(True)
     plt.show()
+
+def main(filename):
+    data = clean_csv(filename)
+    feature1, feature2 = find_most_similar_features(data)
+    plot_features(data, feature1, feature2)
 
 if __name__ == "__main__":
     filename = 'dataset_train.csv'

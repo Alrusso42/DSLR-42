@@ -2,10 +2,7 @@ import pandas as pd
 import numpy as np
 from sklearn.preprocessing import StandardScaler
 import os
-
-def sigmoid(z):
-    """La fonction sigmoïde pour la classification binaire."""
-    return 1 / (1 + np.exp(-z))
+from utils import preprocess_test_data, sigmoid
 
 def softmax(x):
     """Calcul de la fonction softmax pour obtenir des probabilités entre 0 et 1."""
@@ -31,26 +28,6 @@ def predict(X, weights, classes):
         predictions.append(predicted_class)
 
     return predictions
-
-
-def preprocess_data(file_path):
-    """Charge et nettoie les données de test (normalisation Z-score et sélection des colonnes pertinentes)."""
-    data = pd.read_csv(file_path)
-
-    features = ['Arithmancy', 'Astronomy', 'Herbology', 'Defense Against the Dark Arts',
-                'Divination', 'Muggle Studies', 'Ancient Runes', 'History of Magic', 
-                'Transfiguration', 'Potions', 'Care of Magical Creatures', 'Charms', 'Flying']
-    
-    X = data[features].values
-
-    # Remplacer les NaN par la moyenne de chaque colonne
-    X = np.nan_to_num(X, nan=np.nanmean(X, axis=0))
-
-    # Normalisation Z-score
-    scaler = StandardScaler()
-    X = scaler.fit_transform(X)
-    
-    return X
 
 
 def load_weights(file_path):
@@ -89,7 +66,7 @@ def main():
     check_file(test_filename)
 
     # Charger les données de test
-    X_test = preprocess_data(test_filename)
+    X_test = preprocess_test_data(test_filename)
 
     # Charger les poids du fichier
     weights = load_weights(weight_filename)

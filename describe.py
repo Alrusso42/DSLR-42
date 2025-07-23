@@ -1,16 +1,16 @@
 import sys
-from utils import CColor, load_csv, summarize_dataframe, print_summary
+from utils import Color, load_csv, summarize_dataCsv, print_summary
 
 def describe(filename):
-    data = load_csv(filename)
-    if data is None:
+    dataCsv = load_csv(filename)
+    if dataCsv is None:
         return
     
-    summary = summarize_dataframe(data)
+    summary = summarize_dataCsv(dataCsv)
     print_summary(summary)
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
-        print(f"{CColor.YELLOW}Usage: python3 describe.py dataset_train.csv{CColor.ENDC}")
+        print(f"{Color.YELLOW}Usage: python3 describe.py dataset_train.csv{Color.ENDC}")
     else:
         describe(sys.argv[1])
