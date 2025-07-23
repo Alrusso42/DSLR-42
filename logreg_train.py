@@ -3,16 +3,15 @@ import argparse
 from tqdm import tqdm
 from utils import gradient_descent, stochastic_gradient_descent, mini_batch_gradient_descent, sigmoid, preprocess_training_data, save_weights
 import numpy as np
+import matplotlib.pyplot as plt
 
 
 def train(X, y, classes, learning_rate=0.0001, epochs=10000, lambda_reg=0.001, method='batch', batch_size=128):
-    """Entraînement du modèle en choisissant la méthode de descente de gradient."""
     all_weights = {}
+    all_cost_histories = {}
 
     np.random.seed(42)
-
     classes = sorted(classes)
-
     base_weights = np.random.randn(X.shape[1] + 1) * 0.01
 
     for cls in classes:
@@ -20,15 +19,28 @@ def train(X, y, classes, learning_rate=0.0001, epochs=10000, lambda_reg=0.001, m
         weights = base_weights.copy()
 
         if method == 'batch':
-            weights, _ = gradient_descent(X, binary_y, weights)
+            weights, cost_history = gradient_descent(X, binary_y, weights)
         elif method == 'sgd':
-            weights, _ = stochastic_gradient_descent(X, binary_y, weights)
+            weights, cost_history = stochastic_gradient_descent(X, binary_y, weights)
         elif method == 'mini_batch':
-            weights, _ = mini_batch_gradient_descent(X, binary_y, weights)
+            weights, cost_history = mini_batch_gradient_descent(X, binary_y, weights)
         else:
             raise ValueError("Méthode non reconnue. Choisir 'batch', 'sgd', ou 'mini_batch'.")
 
         all_weights[cls] = weights
+        all_cost_histories[cls] = cost_history
+
+    # Moyenne des losses sur toutes les classes (all_cost_histories est un dict)
+    avg_cost = np.mean([cost for cost in all_cost_histories.values()], axis=0)
+
+    plt.figure(figsize=(8,5))
+    plt.plot(avg_cost, label='Loss moyen')
+    plt.xlabel("Epoch")
+    plt.ylabel("Loss")
+    plt.title(f"Courbe de Loss durant l'entraînement ({method})")
+    plt.legend()
+    plt.grid(True)
+    plt.show()
 
     return all_weights
 

@@ -266,7 +266,6 @@ def gradient_descent(X, y, weights, learning_rate=0.01, epochs=10000, lambda_reg
 
 
 def stochastic_gradient_descent(X, y, weights, learning_rate=0.001, epochs=500, lambda_reg=0.001):
-    """Fonction de gradient descendant stochastique pour entraîner le modèle."""
     m = len(y)
     cost_history = []
 
@@ -290,7 +289,14 @@ def stochastic_gradient_descent(X, y, weights, learning_rate=0.001, epochs=500, 
 
             weights -= learning_rate * gradient
 
+        # Calcul du coût à la fin de chaque epoch (après mise à jour sur tout le dataset)
+        z = np.dot(X, weights[1:]) + weights[0]
+        predictions = sigmoid(z)
+        cost = (-1 / m) * np.sum(y * np.log(predictions) + (1 - y) * np.log(1 - predictions)) + (lambda_reg / (2 * m)) * np.sum(weights[1:] ** 2)
+        cost_history.append(cost)
+
     return weights, cost_history
+
 
 def mini_batch_gradient_descent(X, y, weights, learning_rate=0.001, epochs=500, lambda_reg=0.001, batch_size=128):
     """Fonction de descente de gradient par mini-lots pour entraîner le modèle."""
@@ -321,9 +327,6 @@ def mini_batch_gradient_descent(X, y, weights, learning_rate=0.001, epochs=500, 
         predictions = sigmoid(z)
         cost = (-1 / m) * np.sum(y * np.log(predictions) + (1 - y) * np.log(1 - predictions)) + (lambda_reg / (2 * m)) * np.sum(weights[1:] ** 2)
         cost_history.append(cost)
-
-        if progress_bar:
-            progress_bar.update(1)
 
     return weights, cost_history
 
